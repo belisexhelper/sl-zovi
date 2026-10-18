@@ -87,7 +87,15 @@ object Notif {
             if (cur.isNotEmpty() && cur != callId) return
         }
         nm(c).cancel(TAG_CALL, CALL_ID)
+        Ringer.stop()
     }
+
+    /** Uklanja obaveštenje o pozivu (i njegov zvuk) ne gaseći zvonjenje same aplikacije. */
+    fun hide(c: Context) { nm(c).cancel(TAG_CALL, CALL_ID) }
+
+    fun isRinging(c: Context): Boolean = try {
+        nm(c).activeNotifications.any { it.id == CALL_ID && it.tag == TAG_CALL }
+    } catch (_: Exception) { false }
 
     fun message(c: Context, title: String, body: String, key: String) {
         val open = activity(c, 20) { }

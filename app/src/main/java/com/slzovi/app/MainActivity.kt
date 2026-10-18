@@ -32,6 +32,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var web: WebView
     private var pendingReq: PermissionRequest? = null
+    private var callActive = false
+    private var lockUntil = 0L
+    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
 
     private val startPerms = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { }
 
@@ -119,7 +122,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleIntent(i: Intent?, first: Boolean) {
         i ?: return
-        lockScreenMode(i.getBooleanExtra("call", false))
+        val fromCall = i.getBooleanExtra("call", false)
+        lockScreenMode(fromCall)
+        if (fromCall) {
+            // daj stranici vremena da primi poziv; ne skrivaj aplikaciju iza zaključanog ekrana prerano
+            lockUntil = System.currentTimeMillis() + 60_000
+            handler.postDelayed({ if (!callActive) lockScreenMode(false) }, 61_000)
+        }
         val act = i.getStringExtra("action")
         if (act != null) {
             Store.setAction(this, act, i.getStringExtra("callId"))
@@ -158,6 +167,8 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         visible = true
+        // ako je poziv zvonio preko obaveštenja, preuzmi zvonjenje (jačina zvona) i sakrij obaveštenje
+        if (Notif.isRinging(this)) { Notif.hide(this); Ringer.start(this) }
         // namerno bez web.onPause(): WebSocket i tajmeri ostaju aktivni dok je proces živ
     }
 
@@ -190,15 +201,22 @@ class MainActivity : AppCompatActivity() {
         fun callState(active: Boolean) {
             runOnUiThread {
                 if (active) {
+                    callActive = true
                     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                    if (visible) { Notif.cancelCall(this@MainActivity); CallService.start(this@MainActivity) }
+                    if (visible) { Notif.hide(this@MainActivity); CallService.start(this@MainActivity) }
                 } else {
                     window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     CallService.stop(this@MainActivity)
-                    lockScreenMode(false)
+                    if (callActive || System.currentTimeMillis() > lockUntil) { callActive = false; lockScreenMode(false) }
                 }
             }
         }
+
+        @JavascriptInterface
+        fun ringStart() { if (visible) Ringer.start(applicationContext) }
+
+        @JavascriptInterface
+        fun ringStop() { Ringer.stop() }
 
         @JavascriptInterface
         fun takeAction(): String = Store.takeAction(applicationContext)
