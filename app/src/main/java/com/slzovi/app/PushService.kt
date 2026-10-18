@@ -14,6 +14,7 @@ class PushService : FirebaseMessagingService() {
     override fun onMessageReceived(m: RemoteMessage) {
         val d = m.data
         val visible = MainActivity.visible
+        Store.setLast(this, (d["type"] ?: "?") + " " + java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.US).format(java.util.Date()))
         when (d["type"]) {
             "call" -> {
                 if (visible) return // aplikacija je otvorena, zvoni sama

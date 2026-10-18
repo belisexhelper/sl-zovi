@@ -215,6 +215,7 @@ class MainActivity : AppCompatActivity() {
                 .put("cfg", Store.cfg(app) != null)
                 .put("token", Store.token(app).isNotEmpty())
                 .put("err", Store.err(app))
+                .put("last", Store.last(app))
                 .put("version", BuildConfig.VERSION_NAME)
                 .toString()
         }
@@ -233,6 +234,11 @@ class MainActivity : AppCompatActivity() {
             try { startActivity(i) } catch (_: Exception) {
                 try { startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, pkg).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) } catch (_: Exception) { }
             }
+        }
+
+        @JavascriptInterface
+        fun testLocal() {
+            Notif.message(applicationContext, "SL Zovi", "Probno obaveštenje na ovom telefonu — ako ovo vidite i čujete, obaveštenja su dozvoljena.", "test")
         }
 
         @JavascriptInterface

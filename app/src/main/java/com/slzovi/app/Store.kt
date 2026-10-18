@@ -34,6 +34,9 @@ object Store {
     fun err(c: Context): String = p(c).getString("err", "") ?: ""
     fun setErr(c: Context, e: String) { p(c).edit().putString("err", e.take(300)).apply() }
 
+    fun last(c: Context): String = p(c).getString("last", "") ?: ""
+    fun setLast(c: Context, s: String) { p(c).edit().putString("last", s).apply() }
+
     fun ringId(c: Context): String = p(c).getString("ringId", "") ?: ""
     fun setRingId(c: Context, id: String) { p(c).edit().putString("ringId", id).apply() }
 }
