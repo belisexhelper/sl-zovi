@@ -20,7 +20,7 @@ class PushService : FirebaseMessagingService() {
                 if (visible) return // aplikacija je otvorena, zvoni sama
                 val video = d["video"] == "1"
                 val name = d["name"] ?: ""
-                val from = d["from"] ?: ""
+                val from = d["caller"] ?: d["from"] ?: ""
                 Notif.incoming(
                     this, d["callId"] ?: "",
                     getString(if (video) R.string.incoming_video else R.string.incoming_call),
@@ -33,7 +33,7 @@ class PushService : FirebaseMessagingService() {
                 Notif.incoming(
                     this, d["callId"] ?: "",
                     getString(if (video) R.string.group_video else R.string.group_call) + " · " + (d["gname"] ?: ""),
-                    d["from"] ?: "", true
+                    d["caller"] ?: d["from"] ?: "", true
                 )
             }
             "call_end" -> Notif.cancelCall(this, d["callId"])
