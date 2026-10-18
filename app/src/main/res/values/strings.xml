@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SL Zovi</string>
+    <string name="ch_calls">Dolazni pozivi</string>
+    <string name="ch_msgs">Poruke</string>
+    <string name="ch_ongoing">Poziv u toku</string>
+    <string name="accept">Prihvati</string>
+    <string name="decline">Odbij</string>
+    <string name="join">Pridruži se</string>
+    <string name="incoming_call">Dolazni poziv</string>
+    <string name="incoming_video">Dolazni video poziv</string>
+    <string name="group_call">Grupni poziv</string>
+    <string name="group_video">Grupni video poziv</string>
+    <string name="call_active">Poziv je u toku</string>
+</resources>
