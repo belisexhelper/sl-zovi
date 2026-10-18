@@ -216,6 +216,7 @@ class MainActivity : AppCompatActivity() {
                 .put("token", Store.token(app).isNotEmpty())
                 .put("err", Store.err(app))
                 .put("last", Store.last(app))
+                .put("battery", (app.getSystemService(Context.POWER_SERVICE) as android.os.PowerManager).isIgnoringBatteryOptimizations(app.packageName))
                 .put("version", BuildConfig.VERSION_NAME)
                 .toString()
         }
@@ -228,7 +229,10 @@ class MainActivity : AppCompatActivity() {
                 "fullscreen" ->
                     if (Build.VERSION.SDK_INT >= 34) Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT, pkg)
                     else Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, pkg)
-                else -> Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, pkg)
+                else ->
+                    if ((getSystemService(Context.POWER_SERVICE) as android.os.PowerManager).isIgnoringBatteryOptimizations(packageName))
+                        Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                    else Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, pkg)
             }
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             try { startActivity(i) } catch (_: Exception) {

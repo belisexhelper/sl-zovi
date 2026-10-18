@@ -14,7 +14,7 @@ class PushService : FirebaseMessagingService() {
     override fun onMessageReceived(m: RemoteMessage) {
         val d = m.data
         val visible = MainActivity.visible
-        Store.setLast(this, (d["type"] ?: "?") + " " + java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.US).format(java.util.Date()))
+        Store.setLast(this, (d["type"] ?: "?") + (if (visible) " (app otvorena) " else " ") + "u " + java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.US).format(java.util.Date()))
         when (d["type"]) {
             "call" -> {
                 if (visible) return // aplikacija je otvorena, zvoni sama
@@ -37,8 +37,8 @@ class PushService : FirebaseMessagingService() {
                 )
             }
             "call_end" -> Notif.cancelCall(this, d["callId"])
-            "msg" -> if (!visible || d["force"] == "1") Notif.message(this, d["title"] ?: "SL Zovi", d["body"] ?: "", d["peer"] ?: "")
-            "gmsg" -> if (!visible) Notif.message(this, d["title"] ?: "SL Zovi", d["body"] ?: "", "g:" + (d["group"] ?: ""))
+            "msg" -> Notif.message(this, d["title"] ?: "SL Zovi", d["body"] ?: "", d["peer"] ?: "")
+            "gmsg" -> Notif.message(this, d["title"] ?: "SL Zovi", d["body"] ?: "", "g:" + (d["group"] ?: ""))
         }
     }
 }
