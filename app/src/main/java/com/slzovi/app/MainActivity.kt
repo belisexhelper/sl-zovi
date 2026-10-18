@@ -207,10 +207,14 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     CallService.stop(this@MainActivity)
+                    AudioRoute.reset(this@MainActivity)
                     if (callActive || System.currentTimeMillis() > lockUntil) { callActive = false; lockScreenMode(false) }
                 }
             }
         }
+
+        @JavascriptInterface
+        fun setSpeaker(on: Boolean) { AudioRoute.set(applicationContext, on) }
 
         @JavascriptInterface
         fun ringStart() { if (visible) Ringer.start(applicationContext) }
