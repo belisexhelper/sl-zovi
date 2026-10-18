@@ -36,7 +36,7 @@ class PushService : FirebaseMessagingService() {
                 )
             }
             "call_end" -> Notif.cancelCall(this, d["callId"])
-            "msg" -> if (!visible) Notif.message(this, d["title"] ?: "SL Zovi", d["body"] ?: "", d["peer"] ?: "")
+            "msg" -> if (!visible || d["force"] == "1") Notif.message(this, d["title"] ?: "SL Zovi", d["body"] ?: "", d["peer"] ?: "")
             "gmsg" -> if (!visible) Notif.message(this, d["title"] ?: "SL Zovi", d["body"] ?: "", "g:" + (d["group"] ?: ""))
         }
     }
