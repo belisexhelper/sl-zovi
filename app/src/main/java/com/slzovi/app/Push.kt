@@ -25,6 +25,7 @@ object Push {
             return true
         } catch (e: Exception) {
             Log.e(TAG, "init failed", e)
+            Store.setErr(app, "init: " + e)
             return false
         }
     }
@@ -35,10 +36,14 @@ object Push {
             FirebaseMessaging.getInstance().token.addOnCompleteListener { t ->
                 if (t.isSuccessful && !t.result.isNullOrEmpty()) {
                     Store.setToken(ctx, t.result)
+                    Store.setErr(ctx, "")
                     cb(t.result)
-                } else Log.e(TAG, "token failed", t.exception)
+                } else {
+                    Log.e(TAG, "token failed", t.exception)
+                    Store.setErr(ctx, "token: " + t.exception)
+                }
             }
-        } catch (e: Exception) { Log.e(TAG, "token error", e) }
+        } catch (e: Exception) { Log.e(TAG, "token error", e); Store.setErr(ctx, "token: " + e) }
     }
 
     /** Javlja token serveru direktno (kad se token promeni a aplikacija nije otvorena). */

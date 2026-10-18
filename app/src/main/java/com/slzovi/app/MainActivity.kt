@@ -212,6 +212,9 @@ class MainActivity : AppCompatActivity() {
                 .put("notif", NotificationManagerCompat.from(app).areNotificationsEnabled())
                 .put("fullScreen", full)
                 .put("push", Store.cfg(app) != null && Store.token(app).isNotEmpty())
+                .put("cfg", Store.cfg(app) != null)
+                .put("token", Store.token(app).isNotEmpty())
+                .put("err", Store.err(app))
                 .put("version", BuildConfig.VERSION_NAME)
                 .toString()
         }

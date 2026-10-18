@@ -31,6 +31,9 @@ object Store {
         } catch (_: Exception) { "null" }
     }
 
+    fun err(c: Context): String = p(c).getString("err", "") ?: ""
+    fun setErr(c: Context, e: String) { p(c).edit().putString("err", e.take(300)).apply() }
+
     fun ringId(c: Context): String = p(c).getString("ringId", "") ?: ""
     fun setRingId(c: Context, id: String) { p(c).edit().putString("ringId", id).apply() }
 }
